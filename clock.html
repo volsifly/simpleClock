@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    <title>佛系时钟</title>
+    <style>
+        body {
+            background: #000;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        #clock01 {
+            width: 100%;
+            text-align: center;
+            color: #666;
+            font-family: sans-serif;
+        }
+
+        .timer div {
+            position: absolute;
+            text-align: center;
+        }
+
+        .flipHour-enter-active,
+        .flipHour-leave-active {
+            -webkit-transition: all 10s ease;
+        }
+
+        .flipMin-enter-active,
+        .flipMin-leave-active {
+            -webkit-transition: all 3s ease;
+        }
+
+        .flip-enter-active,
+        .flip-leave-active {
+            -webkit-transition: all 1s ease;
+        }
+
+        .flipHour-enter,
+        .flipMin-enter,
+        .flip-enter {
+            opacity: 0;
+            -webkit-transform: skewX(-60deg) scale(1, 0);
+        }
+
+        .flipHour-leave-to,
+        .flipMin-leave-to,
+        .flip-leave-to {
+            opacity: 0;
+            -webkit-transform: skewX(60deg) scale(1, 0);
+        }
+
+        .fade-enter-active,
+        .fade-leave-active {
+            -webkit-transition: all 1s ease;
+        }
+
+        .fade-enter,
+        .fade-leave-to {
+            opacity: 0;
+        }
+    </style>
+    <script src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="clock01">
+        <div class="timer" :style="'font-size: '+windowWidth*0.25+'px;height: '+windowWidth*0.30+'px;line-height: '+windowWidth*0.30+'px;margin-top: '+(windowHeight*0.45-windowWidth*0.15)+'px;'">
+            <transition name="flipHour" appear>
+                <div style="width:30%;margin-left: 5%;" v-if="hour%2==0" key="hour0">{{hour}}</div>
+                <div style="width:30%;margin-left: 5%;" v-else key="hour1">{{hour}}</div>
+            </transition>
+            <transition name="fade" appear>
+                <div style="width:10%;margin-left: 35%;" v-if="sec%2==0" key="dot0">:</div>
+            </transition>
+            <transition name="flipMin" appear>
+                <div style="width:30%;margin-left: 45%;" v-if="min%2==0" key="min0">{{min}}</div>
+                <div style="width:30%;margin-left: 45%;" v-else key="min1">{{min}}</div>
+            </transition>
+
+            <transition name="flip" appear>
+                <div style="width:20%;margin-left: 75%;font-size: 0.7em;" v-if="sec%2==0" key="sec0">{{sec}}</div>
+                <div style="width:20%;margin-left: 75%;font-size: 0.7em;" v-else key="sec1">{{sec}}</div>
+            </transition>
+        </div>
+        <div :style="'font-size: '+windowWidth*0.05+'px;'">{{day}}</div>
+    </div>
+</body>
+<script>
+    var clock = new Vue({
+        el: "#clock01",
+        data: {
+            hour: "",
+            min: "",
+            sec: "",
+            day: "",
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight,
+        },
+        methods: {
+            updateTime: function () {
+                var d = new Date();
+                this.hour = getDate(d, "h");
+                this.min = getDate(d, "m");
+                this.sec = getDate(d, "s");
+
+                var day = [
+                    "星期天",
+                    "星期一",
+                    "星期二",
+                    "星期三",
+                    "星期四",
+                    "星期五",
+                    "星期六"
+                ]
+                this.day = getDate(d, "Y年M月D日") + "    " + day[d.getDay()]
+            }
+        }
+    });
+
+
+    var timer = setInterval(clock.updateTime, 1000);
+    clock.updateTime();
+
+    function getDate(d, str) {
+        function replaceStr(Ostr, ReplaceStr, InsertStr) {
+            var strArray = Ostr.split(ReplaceStr);
+            Ostr = "";
+            if (strArray.length > 0) {
+                for (var i in strArray) {
+                    if (i > 0) {
+                        Ostr += InsertStr;
+                    }
+                    Ostr += strArray[i];
+                }
+            }
+            return Ostr;
+        }
+        str = replaceStr(str, "Y", d.getFullYear());
+        str = replaceStr(str, "M", ((d.getMonth() * 1 + 1) > 9) ? d.getMonth() * 1 + 1 : "0" + (d.getMonth() * 1 + 1));
+        str = replaceStr(str, "D", (d.getDate() > 9) ? d.getDate() : "0" + d.getDate());
+        str = replaceStr(str, "h", (d.getHours() > 9) ? d.getHours() : "0" + d.getHours());
+        str = replaceStr(str, "m", (d.getMinutes() > 9) ? d.getMinutes() : "0" + d.getMinutes());
+        str = replaceStr(str, "s", (d.getSeconds() > 9) ? d.getSeconds() : "0" + d.getSeconds());
+
+        return str;
+    }
+
+    window.onresize = function () {
+        clock.windowWidth = window.innerWidth;
+        clock.windowHeight = window.innerHeight;
+    }
+</script>
+
+</html>
