@@ -4,3 +4,7 @@
 DEMO:http://www.hiiman.com/clock.html
 
 安卓可以下载APK使用，苹果用浏览器打开然后横屏可以全屏，同时可以把网页快捷方式放在桌面。
+
+安卓APK下载：https://raw.githubusercontent.com/volsifly/simpleClock/master/clock.apk
+
+安卓APK使用Fusion App打包
